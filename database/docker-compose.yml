@@ -1,0 +1,104 @@
+version: '3.8'
+
+networks:
+  twenty_network:
+    driver: bridge
+
+volumes:
+  twenty_db_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: twenty_pg
+    env_file: .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ALLOW_NOSSL=${ALLOW_NOSSL}
+    volumes:
+      - twenty_db_data:/var/lib/postgresql/data
+      - ./init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - twenty_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: twenty_redis
+    env_file: .env
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - twenty_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: twenty_clickhouse
+    env_file: .env
+    environment:
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+    ports:
+      - "${CLICKHOUSE_PORT_HTTP}:8123"
+      - "${CLICKHOUSE_PORT_NATIVE}:9000"
+    networks:
+      - twenty_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: twenty_grafana
+    env_file: .env
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_INSTALL_PLUGINS=${GRAFANA_PLUGINS}
+    volumes:
+      - ../packages/twenty-docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    networks:
+      - twenty_network
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: twenty_otlp_collector
+    env_file: .env
+    command: ["--config", "/etc/otel-collector-config.yaml"]
+    volumes:
+      - ../packages/twenty-docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "${OTLP_GRPC_PORT}:4317"
+      - "${OTLP_HTTP_PORT}:4318"
+      - "${OTLP_HEALTH_CHECK_PORT}:13133"
+    networks:
+      - twenty_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:13133/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
