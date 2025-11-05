@@ -7,6 +7,8 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 
+import { AdminCreateUserForm } from '@/workspace-member/components/AdminCreateUserForm';
+
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -38,13 +40,14 @@ import {
   Avatar,
   H2Title,
   IconMail,
+  IconPlus,
   IconReload,
   IconSearch,
   IconTrash,
   Status,
   TooltipDelay,
 } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { Button, IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   useGetWorkspaceInvitationsQuery,
@@ -115,6 +118,7 @@ export const SettingsWorkspaceMembers = () => {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [impersonate] = useImpersonateMutation();
   const { executeImpersonationAuth } = useImpersonationAuth();
+  const { openModal } = useModal();
   const [searchFilter, setSearchFilter] = useState('');
 
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
@@ -275,8 +279,6 @@ export const SettingsWorkspaceMembers = () => {
     });
   }, [workspaceMembers, searchFilter]);
 
-  const { openModal } = useModal();
-
   return (
     <SubMenuTopBarContainer
       title={t`Members`}
@@ -289,6 +291,22 @@ export const SettingsWorkspaceMembers = () => {
       ]}
     >
       <SettingsPageContainer>
+        <Section>
+          <H2Title
+            title={t`Add New User`}
+            description={t`Create a new user account for this workspace`}
+            adornment={
+              <Button
+                Icon={IconPlus}
+                title={t`Add User`}
+                size="small"
+                variant="secondary"
+                onClick={() => openModal('admin-create-user-modal')}
+              />
+            }
+          />
+        </Section>
+
         {currentWorkspace?.inviteHash &&
           currentWorkspace?.isPublicInviteLinkEnabled && (
             <Section>
@@ -498,6 +516,8 @@ export const SettingsWorkspaceMembers = () => {
         }
         confirmButtonText={t`Delete account`}
       />
+
+      <AdminCreateUserForm />
     </SubMenuTopBarContainer>
   );
 };

@@ -2,12 +2,15 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import omit from 'lodash.omit';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { AdminCreateUserInput } from 'src/engine/core-modules/auth/dto/admin-create-user.input';
+import { AdminCreateUserOutput } from 'src/engine/core-modules/auth/dto/admin-create-user.output';
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
@@ -76,11 +79,11 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
+import { ApiKeyToken } from './dto/api-key-token.dto';
+import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginTokenOutput } from './dto/login-token.dto';
 import { SignUpInput } from './dto/sign-up.input';
-import { ApiKeyToken } from './dto/api-key-token.dto';
-import { AuthTokens } from './dto/auth-tokens.dto';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistOutput } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
@@ -356,56 +359,66 @@ export class AuthResolver {
     return await this.authService.verify(email, workspace.id, authProvider);
   }
 
-  @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  // @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
+  // @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
-    const user = await this.signInUpService.signUpWithoutWorkspace(
+    // Public sign up is disabled
+    const email = signUpInput.email;
+
+    throw new AuthException(
+      'Public sign up is disabled',
+      AuthExceptionCode.SIGNUP_DISABLED,
       {
-        email: signUpInput.email,
-      },
-      {
-        provider: AuthProviderEnum.Password,
-        password: signUpInput.password,
+        userFriendlyMessage: msg`Cannot sign up for email ${email}. Public sign up is disabled. Contact your administrator.`,
       },
     );
+    // const user = await this.signInUpService.signUpWithoutWorkspace(
+    //   {
+    //     email: signUpInput.email,
+    //   },
+    //   {
+    //     provider: AuthProviderEnum.Password,
+    //     password: signUpInput.password,
+    //   },
+    // );
 
-    const availableWorkspaces =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        user.email,
-      );
+    // const availableWorkspaces =
+    //   await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+    //     user.email,
+    //   );
 
-    await this.emailVerificationService.sendVerificationEmail(
-      user.id,
-      user.email,
-      undefined,
-      signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailRedirectPath,
-    );
+    // await this.emailVerificationService.sendVerificationEmail(
+    //   user.id,
+    //   user.email,
+    //   undefined,
+    //   signUpInput.locale ?? SOURCE_LOCALE,
+    //   signUpInput.verifyEmailRedirectPath,
+    // );
 
-    return {
-      availableWorkspaces:
-        await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-          availableWorkspaces,
-          user,
-          AuthProviderEnum.Password,
-        ),
-      tokens: {
-        accessOrWorkspaceAgnosticToken:
-          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            {
-              userId: user.id,
-              authProvider: AuthProviderEnum.Password,
-            },
-          ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
-      },
-    };
+    // return {
+    //   availableWorkspaces:
+    //     await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+    //       availableWorkspaces,
+    //       user,
+    //       AuthProviderEnum.Password,
+    //     ),
+    //   tokens: {
+    //     accessOrWorkspaceAgnosticToken:
+    //       await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+    //         {
+    //           userId: user.id,
+    //           authProvider: AuthProviderEnum.Password,
+    //         },
+    //       ),
+    //     refreshToken: await this.refreshTokenService.generateRefreshToken({
+    //       userId: user.id,
+    //       authProvider: AuthProviderEnum.Password,
+    //       targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+    //     }),
+    //   },
+    // };
   }
 
   @Mutation(() => SignUpOutput)
@@ -839,5 +852,34 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
+  }
+
+  @Mutation(() => AdminCreateUserOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE_MEMBERS),
+  )
+  async adminCreateUser(
+    @Args('adminCreateUserInput') adminCreateUserInput: AdminCreateUserInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<AdminCreateUserOutput> {
+    const user = await this.signInUpService.adminCreateUserInWorkspace(
+      {
+        email: adminCreateUserInput.email,
+        firstName: adminCreateUserInput.firstName,
+        lastName: adminCreateUserInput.lastName,
+        password: adminCreateUserInput.password,
+        locale: adminCreateUserInput.locale,
+      },
+      workspace,
+    );
+
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isEmailVerified: user.isEmailVerified,
+    };
   }
 }

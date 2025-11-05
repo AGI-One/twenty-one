@@ -495,4 +495,72 @@ export class SignInUpService {
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
     );
   }
+
+  async adminCreateUserInWorkspace(
+    userParams: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      password: string;
+      locale?: string;
+    },
+    workspace: WorkspaceEntity,
+  ) {
+    // Check if user already exists
+    const existingUser = await this.userService.findUserByEmail(
+      userParams.email,
+    );
+
+    if (existingUser) {
+      // If user exists, check if they're already in this workspace
+      const isUserAlreadyInWorkspace =
+        await this.userWorkspaceService.checkUserWorkspaceExists(
+          existingUser.id,
+          workspace.id,
+        );
+
+      if (isUserAlreadyInWorkspace) {
+        throw new AuthException(
+          'User is already in this workspace',
+          AuthExceptionCode.USER_ALREADY_EXISTS,
+          { userFriendlyMessage: msg`User is already in this workspace` },
+        );
+      }
+
+      // User exists but not in workspace - we could add them to workspace instead of creating new user
+      // For now, we'll throw an error to prevent duplicate users
+      throw new AuthException(
+        'User already exists in system',
+        AuthExceptionCode.USER_ALREADY_EXISTS,
+        { userFriendlyMessage: msg`User already exists in system` },
+      );
+    }
+
+    // Create new user
+    const passwordHash = await this.generateHash(userParams.password);
+
+    const newUser = await this.saveNewUser(
+      {
+        email: userParams.email,
+        firstName: userParams.firstName,
+        lastName: userParams.lastName,
+        passwordHash,
+        locale: userParams.locale ?? 'en',
+        picture: '',
+        isEmailVerified: true, // Admin created users are pre-verified
+      },
+      {
+        canImpersonate: false,
+        canAccessFullAdminPanel: false,
+      },
+    );
+
+    // Add user to workspace
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      newUser,
+      workspace,
+    );
+
+    return newUser;
+  }
 }
