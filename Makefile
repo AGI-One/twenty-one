@@ -11,6 +11,16 @@ rsdb:
 	@echo "🗑️  Removing Docker volumes for twenty-one project only..."
 	docker volume rm -f database_twenty_db_data 2>/dev/null || true
 	docker volume rm -f twenty_db_data 2>/dev/null || true
+	docker volume rm -f database_redis_data 2>/dev/null || true
+	docker volume rm -f redis_data 2>/dev/null || true
+	docker volume rm -f database_clickhouse_data 2>/dev/null || true
+	docker volume rm -f clickhouse_data 2>/dev/null || true
+	docker volume rm -f database_grafana_data 2>/dev/null || true
+	docker volume rm -f grafana_data 2>/dev/null || true
+	docker volume rm -f database_otel_data 2>/dev/null || true
+	docker volume rm -f otel_data 2>/dev/null || true
+	docker volume rm -f database_minio_data 2>/dev/null || true
+	docker volume rm -f minio_data 2>/dev/null || true
 	@echo "✅ Database volumes and data cleared."
 	make dbup
 	@echo "✅ Databases reset and restarted!"
@@ -78,6 +88,16 @@ win-rsdb: ## Windows: Reset databases (deleting all data)
 	@echo 🗑️  Removing Docker volumes for twenty-one project only...
 	docker volume rm -f database_twenty_db_data 2>nul || echo Volume not found
 	docker volume rm -f twenty_db_data 2>nul || echo Volume not found
+	docker volume rm -f database_redis_data 2>nul || echo Volume not found
+	docker volume rm -f redis_data 2>nul || echo Volume not found
+	docker volume rm -f database_clickhouse_data 2>nul || echo Volume not found
+	docker volume rm -f clickhouse_data 2>nul || echo Volume not found
+	docker volume rm -f database_grafana_data 2>nul || echo Volume not found
+	docker volume rm -f grafana_data 2>nul || echo Volume not found
+	docker volume rm -f database_otel_data 2>nul || echo Volume not found
+	docker volume rm -f otel_data 2>nul || echo Volume not found
+	docker volume rm -f database_minio_data 2>nul || echo Volume not found
+	docker volume rm -f minio_data 2>nul || echo Volume not found
 	@echo ✅ Database volumes and data cleared.
 	make win-dbup
 	@echo ✅ Databases reset and restarted!
