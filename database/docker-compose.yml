@@ -15,7 +15,7 @@ volumes:
 
 services:
   postgres:
-    image: postgres:16
+    image: postgres:bullseye
     container_name: twenty_pg
     env_file: .env
     environment:
@@ -36,7 +36,7 @@ services:
       retries: 5
 
   redis:
-    image: redis/redis-stack-server:latest
+    image: redis/redis-stack-server:7.4.0-v8
     container_name: twenty_redis
     env_file: .env
     ports:
@@ -55,7 +55,7 @@ services:
       retries: 5
 
   clickhouse:
-    image: clickhouse/clickhouse-server:latest
+    image: clickhouse/clickhouse-server:25.10
     container_name: twenty_clickhouse
     env_file: .env
     environment:
@@ -72,7 +72,7 @@ services:
       retries: 5
 
   grafana:
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana-oss:12.2.0-17142428006-ubuntu
     container_name: twenty_grafana
     env_file: .env
     environment:
@@ -95,7 +95,7 @@ services:
       retries: 5
 
   opentelemetry-collector:
-    image: otel/opentelemetry-collector-contrib:latest
+    image: otel/opentelemetry-collector-contrib:0.139.0
     container_name: twenty_otlp_collector
     env_file: .env
     command: ["--config", "/etc/otel-collector-config.yaml"]
