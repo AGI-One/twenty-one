@@ -15,6 +15,9 @@ import { EmploymentTypeWorkspaceEntity } from 'src/modules/employment-type/stand
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { InventoryWorkspaceEntity } from 'src/modules/inventory/standard-objects/inventory.workspace-entity';
+import { ManufacturerWorkspaceEntity } from 'src/modules/manufacturer/standard-objects/manufacturer.workspace-entity';
+import { MaterialWorkspaceEntity } from 'src/modules/material/standard-objects/material.workspace-entity';
+import { MaterialGroupWorkspaceEntity } from 'src/modules/material-group/standard-objects/material-group.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -26,13 +29,7 @@ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.work
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { OrganizationPositionWorkspaceEntity } from 'src/modules/position/standard-objects/position.workspace-entity';
-import { ProductCategoryWorkspaceEntity } from 'src/modules/product-category/standard-objects/product-category.workspace-entity';
-import { ProductOptionGroupLinkWorkspaceEntity } from 'src/modules/product-option-group-link/standard-objects/product-option-group-link.workspace-entity';
-import { ProductOptionGroupWorkspaceEntity } from 'src/modules/product-option-group/standard-objects/product-option-group.workspace-entity';
-import { ProductOptionWorkspaceEntity } from 'src/modules/product-option/standard-objects/product-option.workspace-entity';
-import { ProductVariantOptionValueWorkspaceEntity } from 'src/modules/product-variant-option-value/standard-objects/product-variant-option-value.workspace-entity';
-import { ProductVariantWorkspaceEntity } from 'src/modules/product-variant/standard-objects/product-variant.workspace-entity';
-import { ProductWorkspaceEntity } from 'src/modules/product/standard-objects/product.workspace-entity';
+import { SupplierWorkspaceEntity } from 'src/modules/supplier/standard-objects/supplier.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TeamWorkspaceEntity } from 'src/modules/team/standard-objects/team.workspace-entity';
@@ -82,13 +79,10 @@ export const standardObjectMetadataDefinitions = [
   PersonWorkspaceEntity,
   TaskWorkspaceEntity,
   TaskTargetWorkspaceEntity,
-  ProductWorkspaceEntity,
-  ProductCategoryWorkspaceEntity,
-  ProductOptionWorkspaceEntity,
-  ProductOptionGroupWorkspaceEntity,
-  ProductOptionGroupLinkWorkspaceEntity,
-  ProductVariantWorkspaceEntity,
-  ProductVariantOptionValueWorkspaceEntity,
+  SupplierWorkspaceEntity,
   WarehouseWorkspaceEntity,
   InventoryWorkspaceEntity,
+  ManufacturerWorkspaceEntity,
+  MaterialWorkspaceEntity,
+  MaterialGroupWorkspaceEntity,
 ];

@@ -61,6 +61,26 @@ export class WarehouseWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
+    standardId: WAREHOUSE_STANDARD_FIELD_IDS.warehouseCode,
+    type: FieldMetadataType.TEXT,
+    label: msg`Mã kho`,
+    description: msg`Mã định danh duy nhất cho kho bãi`,
+    icon: 'IconCode',
+  })
+  @WorkspaceIsNullable()
+  warehouseCode: string | null;
+
+  @WorkspaceField({
+    standardId: WAREHOUSE_STANDARD_FIELD_IDS.projectId,
+    type: FieldMetadataType.TEXT,
+    label: msg`ID dự án`,
+    description: msg`ID của dự án liên quan đến kho bãi`,
+    icon: 'IconFolder',
+  })
+  @WorkspaceIsNullable()
+  projectId: string | null;
+
+  @WorkspaceField({
     standardId: WAREHOUSE_STANDARD_FIELD_IDS.code,
     type: FieldMetadataType.TEXT,
     label: msg`Code`,

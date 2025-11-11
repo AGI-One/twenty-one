@@ -5,9 +5,7 @@ import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   INVENTORY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import {
-  STANDARD_OBJECT_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const inventoriesAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
@@ -54,7 +52,7 @@ export const inventoriesAllView = (
         fieldMetadataId:
           inventoryObjectMetadata.fields.find(
             (field) =>
-              field.standardId === INVENTORY_STANDARD_FIELD_IDS.variant,
+              field.standardId === INVENTORY_STANDARD_FIELD_IDS.material,
           )?.id ?? '',
         position: 2,
         isVisible: true,
@@ -64,7 +62,7 @@ export const inventoriesAllView = (
         fieldMetadataId:
           inventoryObjectMetadata.fields.find(
             (field) =>
-              field.standardId === INVENTORY_STANDARD_FIELD_IDS.quantity,
+              field.standardId === INVENTORY_STANDARD_FIELD_IDS.currentBalance,
           )?.id ?? '',
         position: 3,
         isVisible: true,

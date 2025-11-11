@@ -29,17 +29,15 @@ import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-obje
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { organizationPositionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/organization-positions-all.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
-import { productCategoriesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/product-categories-all.view';
-import { productOptionGroupLinksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/product-option-group-links-all.view';
-import { productOptionGroupsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/product-option-groups-all.view';
-import { productOptionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/product-options-all.view';
-import { productVariantsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/product-variants-all.view';
-import { productsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/products-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
 import { teamsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/teams-all.view';
 import { warehousesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/warehouses-all.view';
+import { materialsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/materials-all.view';
+import { materialGroupsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/material-groups-all.view';
+import { suppliersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/suppliers-all.view';
+import { manufacturersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/manufacturers-all.view';
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
@@ -78,12 +76,10 @@ export const prefillCoreViews = async ({
     employmentTypesAllView(objectMetadataItems, true),
     employeeLevelsAllView(objectMetadataItems, true),
     employeeAwardsAllView(objectMetadataItems, true),
-    productsAllView(objectMetadataItems, true),
-    productCategoriesAllView(objectMetadataItems, true),
-    productVariantsAllView(objectMetadataItems, true),
-    productOptionGroupsAllView(objectMetadataItems, true),
-    productOptionsAllView(objectMetadataItems, true),
-    productOptionGroupLinksAllView(objectMetadataItems, true),
+    materialsAllView(objectMetadataItems, true),
+    materialGroupsAllView(objectMetadataItems, true),
+    suppliersAllView(objectMetadataItems, true),
+    manufacturersAllView(objectMetadataItems, true),
     inventoriesAllView(objectMetadataItems, true),
     warehousesAllView(objectMetadataItems, true),
   ];
