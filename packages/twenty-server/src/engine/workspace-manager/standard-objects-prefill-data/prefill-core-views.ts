@@ -16,16 +16,23 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { appUsersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/app-users-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { inventoriesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/inventories-all.view';
+import { jobTitlesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/job-titles-all.view';
 import { manufacturersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/manufacturers-all.view';
+import { materialCategoriesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/material-categories-all.view';
 import { materialGroupsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/material-groups-all.view';
 import { materialsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/materials-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
+import { permissionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/permissions-all.view';
+import { projectsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/projects-all.view';
+import { quotationsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/quotations-all.view';
+import { rolesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/roles-all.view';
 import { suppliersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/suppliers-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
@@ -34,6 +41,7 @@ import { warehousesAllView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { projectUsersAllView } from 'src/modules/project-user/standard-objects/views/project-users-all.view';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -68,6 +76,14 @@ export const prefillCoreViews = async ({
     manufacturersAllView(objectMetadataItems, true),
     inventoriesAllView(objectMetadataItems, true),
     warehousesAllView(objectMetadataItems, true),
+    permissionsAllView(objectMetadataItems, true),
+    jobTitlesAllView(objectMetadataItems, true),
+    rolesAllView(objectMetadataItems, true),
+    appUsersAllView(objectMetadataItems, true),
+    projectsAllView(objectMetadataItems, true),
+    projectUsersAllView(objectMetadataItems, true),
+    quotationsAllView(objectMetadataItems, true),
+    materialCategoriesAllView(objectMetadataItems, true),
   ];
 
   const queryRunner = coreDataSource.createQueryRunner();

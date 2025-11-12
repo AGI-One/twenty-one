@@ -1,5 +1,45 @@
 # Hướng Dẫn: Thêm Standard Object Mới Vào Twenty
 
+## ⚠️ CẢNH BÁO QUAN TRỌNG
+
+### 🚫 KHÔNG BAO GIỜ XÓA ENTITIES TRONG `standard-objects/index.ts`
+
+**LUẬT VÀNG:** Khi thêm entity mới, **TUYỆT ĐỐI KHÔNG XÓA** bất kỳ entity nào đã tồn tại trong file `standard-objects/index.ts`!
+
+```typescript
+// ❌ SAI - Xóa entities cũ
+export const standardObjectMetadataDefinitions = [
+  CompanyWorkspaceEntity,
+  PersonWorkspaceEntity,
+  YourNewEntity,  // Chỉ thêm entity mới
+];
+
+// ✅ ĐÚNG - Giữ nguyên TẤT CẢ entities cũ
+export const standardObjectMetadataDefinitions = [
+  AttachmentWorkspaceEntity,
+  BlocklistWorkspaceEntity,
+  // ... TẤT CẢ entities cũ ...
+  NoteTargetWorkspaceEntity,  // ⚠️ KHÔNG XÓA!
+  PersonWorkspaceEntity,
+  YourNewEntity,  // Chỉ thêm vào cuối (alphabetically)
+];
+```
+
+**Lý do:**
+- Xóa entity sẽ gây lỗi metadata sync
+- Database sẽ mất tables tương ứng
+- Dữ liệu có thể bị mất
+- Relations với entities khác sẽ broken
+
+**Quy tắc:**
+1. ✅ **CHỈ THÊM** entity mới vào array
+2. ✅ Sắp xếp theo alphabet (tuỳ chọn)
+3. ❌ **KHÔNG BAO GIỜ XÓA** entity nào đã có
+4. ❌ Không comment out entities
+5. ❌ Không di chuyển entities ra file khác
+
+---
+
 ## Tổng Quan
 
 Standard Object là các đối tượng dữ liệu cốt lõi được định nghĩa sẵn trong hệ thống Twenty (như Company, Person, Opportunity, Task, Department, Employee, Team...). Khác với Custom Object (do người dùng tự tạo), Standard Object được hard-code vào source code và có sẵn cho tất cả workspace.
@@ -740,6 +780,44 @@ mutation {
 ---
 
 ## Lưu Ý Quan Trọng
+
+### 🚫 0. KHÔNG XÓA ENTITIES (QUAN TRỌNG NHẤT!)
+
+**⚠️ TUYỆT ĐỐI KHÔNG XÓA ENTITIES TRONG `standard-objects/index.ts`**
+
+Khi register entity mới, **CHỈ THÊM** vào array `standardObjectMetadataDefinitions`:
+
+```typescript
+// File: standard-objects/index.ts
+
+// ✅ ĐÚNG - Import entity mới
+import { YourNewEntity } from 'src/modules/your-new/standard-objects/your-new.workspace-entity';
+
+// ✅ ĐÚNG - Giữ NGUYÊN TẤT CẢ entities cũ + thêm entity mới
+export const standardObjectMetadataDefinitions = [
+  AttachmentWorkspaceEntity,      // ⚠️ KHÔNG XÓA!
+  BlocklistWorkspaceEntity,        // ⚠️ KHÔNG XÓA!
+  // ... TẤT CẢ entities khác ...
+  NoteTargetWorkspaceEntity,       // ⚠️ KHÔNG XÓA!
+  TaskTargetWorkspaceEntity,       // ⚠️ KHÔNG XÓA!
+  YourNewEntity,                   // ✅ Chỉ thêm entity mới
+];
+```
+
+**Hậu quả nếu xóa:**
+- ❌ Database sync lỗi
+- ❌ Tables bị drop
+- ❌ Mất dữ liệu
+- ❌ Relations broken
+- ❌ Frontend crash
+
+**Checklist:**
+- [ ] ✅ Import entity mới ở đầu file
+- [ ] ✅ Thêm entity vào cuối array (hoặc theo alphabet)
+- [ ] ✅ Verify KHÔNG có entity nào bị xóa/comment
+- [ ] ✅ Verify import đầy đủ (không có unused imports warning là OK)
+
+---
 
 ### 1. UUID Management
 - ✅ Luôn dùng constants

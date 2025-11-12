@@ -202,9 +202,17 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   warehouse: '9ed5d40d-d38b-4f59-886e-d9789993233b',
   inventory: '3f4a5b6c-7d8e-9f0a-1b2c-3d4e5f6a7b8c',
   material: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+  materialCategory: 'ad58e5a0-f6e5-44c7-b267-31ab60d25a9e',
   supplier: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e',
   manufacturer: 'c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f',
   materialGroup: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
+  role: '9868f6b2-4b84-41b5-827a-193c458ac9d9',
+  appUser: '111ddf63-981f-462f-ab02-71c5904fad98',
+  permission: '79a7990c-f684-4178-bd1b-2d321509fb98',
+  jobTitle: '733111ee-6c42-4ddc-a72a-a7e75bc9c8bd',
+  project: '53e861f9-fe1e-4829-ab6c-891bed9f6fa0',
+  projectUser: '2c4afe8b-309d-4219-a088-9f5bd2bd9c73',
+  quotation: 'e0bf4ca9-c7a2-4d8f-a82a-67a83ea65364',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
@@ -578,7 +586,7 @@ export const MATERIAL_STANDARD_FIELD_IDS = {
   formatCode: '723348d9-730a-4a38-88b5-3392dfc1a73b',
   specification: '3cf49633-a9e4-4fc9-a5e4-8f124cf2e67d',
   unit: '93c06fa2-9906-4b31-ba80-3bf317b97c0a',
-  categoryId: 'a5666051-f753-42ed-80fd-e8c33602ddca',
+  materialCategory: 'b9b96e90-a59d-4168-8774-880aefaf4135',
   model: '749834d2-28b2-49a0-95bb-f64c31de7baa',
   note: '1d6635be-7aa4-4881-a0a7-19afa00c0701',
   materialGroup: '40af6370-ea89-4784-bd8e-c0274e1c819a',
@@ -589,6 +597,16 @@ export const MATERIAL_STANDARD_FIELD_IDS = {
   createdBy: '24d0aafb-8909-4ba6-a68c-e812eee39697',
   timelineActivities: 'e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b',
   searchVector: 'f9d00fbb-f6e3-4380-8e24-f592c3433c7c',
+} as const;
+
+export const MATERIAL_CATEGORY_STANDARD_FIELD_IDS = {
+  materialCategoryCode: '290e2211-b5d7-4b84-8e85-390c71bffd69',
+  materialCategoryName: '34378080-1643-4492-b53e-0088de71bba3',
+  materials: 'fc2a80af-e680-4a48-87f8-e7d0de780bcb',
+  position: 'b6d09124-f68c-40e1-bf43-e43cb3f37c21',
+  createdBy: 'bd401bd3-9e8f-4415-a1b1-3dc26e228bfc',
+  timelineActivities: '4c35f222-8542-40b6-985d-d5fadd0ba2ed',
+  searchVector: '78fa27d5-d7b4-49a6-a249-14d5745cddf1',
 } as const;
 
 export const MATERIAL_GROUP_STANDARD_FIELD_IDS = {
@@ -639,6 +657,7 @@ export const SUPPLIER_STANDARD_FIELD_IDS = {
   tradeTerms: '2f6c8a4e-9b5d-4e7f-c1a2-6c8e2f9b5d7c',
   note: '9e1f4c7a-6d8b-4e2e-a5f9-1f4c9e6d8b2a',
   materialGroups: '7a5e9c2f-8b4d-4e6a-c2f7-5e9c7a8b4d6c',
+  quotations: 'fc4bbad8-6516-4d14-900c-00197c0c01f5',
   position: '5c2a8f6e-9d7b-4e4c-f1a5-2a8f5c9d7b4a',
   createdBy: '3f7a5c9e-6d4b-4e8f-a1c3-7a5f3c6d4b8a',
   searchVector: '1e9c6a4f-8b2d-4e5e-c7a1-9c6e1a8b2d5c',
@@ -671,6 +690,114 @@ export const INVENTORY_STANDARD_FIELD_IDS = {
   createdBy: 'c2d8e9f1-6a7b-4c8d-9e3f-1a2b7c8d9e0f',
 } as const;
 
+export const PERMISSION_STANDARD_FIELD_IDS = {
+  title: '98f1e1ce-ef07-47cc-b00e-77059f1202d2',
+  code: '9042978e-4bd6-495a-b756-f4706567e10a',
+  position: '770ff71b-be0e-4f66-b878-e94a65fbe423',
+  createdBy: '4f9c37f0-8d55-4daf-a5e2-557320a156ce',
+  timelineActivities: 'd61d0b77-af35-4772-b691-9ec86f61df94',
+} as const;
+
+export const JOB_TITLE_STANDARD_FIELD_IDS = {
+  title: 'e778f37e-5703-4928-8a7a-6f2d382305c3',
+  code: '569af3c0-b2a0-442a-8352-022e044360f8',
+  position: 'ceb8d5fe-3ec6-47fa-bc01-06eb2f82fd2e',
+  createdBy: '967938e1-1f1d-41e0-ab50-529f766ae54e',
+  timelineActivities: '20b66dcf-e19b-40f6-b87e-b6f70f70dbcd',
+} as const;
+
+export const ROLE_STANDARD_FIELD_IDS = {
+  roleName: '40c88ead-4a53-42b0-a37c-b20f9e1dd22a',
+  roleCode: 'fecc450b-7be3-4a94-bec9-f6ef0bae2534',
+  description: '294cfc85-7590-4bc5-a369-8fbcaa5009b3',
+  workGroup: 'd3b38846-ceb2-45cd-ab64-698fa227fe4e',
+  position: 'a29622cf-ffff-4055-b130-5bc0552c33a5',
+  createdBy: 'fff2427b-d73b-4227-9359-c01a9ba42a55',
+  searchVector: 'b1129532-e3b3-41dd-9a7b-72cf9b3e770e',
+  timelineActivities: '17621cd3-b65c-454c-a247-58dbaf5f721f',
+} as const;
+
+export const APP_USER_STANDARD_FIELD_IDS = {
+  mail: 'da925b4c-5b31-4b55-84df-d5c787d5db45',
+  isActive: 'a922df60-8de2-46c4-8605-8ca0d1d38d89',
+  displayName: '8850b2c5-0934-4af0-9b18-25a51ad8324a',
+  position: '0b21c6fb-7bfe-4f41-9123-a52709cc9a7e',
+  receivedQuotations: '7335cddd-8a47-431a-94d2-0b6f81eba5c9',
+  approvedQuotations: '59c6fd51-f49e-4f37-b7e0-7d4844e5dd5f',
+  negotiationQuotations: '3c6916bb-c516-4ed7-8888-697785af1ec6',
+  createdBy: '483f4957-1fd0-4836-bc38-76c70911b775',
+  searchVector: '279e8498-9a25-4e72-81f6-d486d4883c16',
+  timelineActivities: '4ed3bf8c-d0a5-4d34-abfb-10a09521e22a',
+  projectUsers: 'ab4769d1-df3a-4623-a493-0377a94827bc',
+} as const;
+
+export const PROJECT_STANDARD_FIELD_IDS = {
+  projectCode: '0f5f4f3d-1bcf-4eb3-b67b-766bcf3fb5e4',
+  projectName: '64bfe43a-bd29-406b-baa6-7bc3718e514d',
+  projectOwnerGroup: '6250355d-eff0-4b5b-a0c1-17b7f966f15d',
+  projectOwnerName: 'd278ca6a-4931-4f4e-81d4-28842b0a122b',
+  contractNumber: '66ec6e49-f285-45c2-8427-dd6b4d45a38d',
+  contractDate: '6762cbea-a5dd-415e-80d8-b5684ff4b00e',
+  contractFileId: '29d143fc-2087-4861-b4c3-bbc846d062e9',
+  startDate: '2119a8dd-4a5a-4546-96aa-d0f15dda2d3b',
+  endDate: '222b90c0-ee89-4a4a-862a-4aba9de1c6eb',
+  commanderEmail: '865f6e8a-f9a9-4f35-94a3-1ca5e7aae5e4',
+  supplyManagerEmail: 'e0fc7bf0-b932-482e-a01b-52ba458481e6',
+  status: '6e0113d7-4150-4aef-a3c9-6f4e3fd5c465',
+  quotations: 'dd7aeee4-7dc8-456f-8fee-f344d1f95fa1',
+  position: 'a74dcf0e-cf52-4e89-aeab-19176f9f55ad',
+  createdBy: '6756ff2e-cf33-4dfb-9cbf-b4a28da1d7d8',
+  searchVector: 'ab523e61-6f19-4f91-a658-f12d4bb334da',
+  timelineActivities: '09f2f88c-4f94-4fa0-8f97-b090c186216e',
+  projectUsers: '1f17d6cf-9c43-43cc-ad0c-3c3f0e7985f7',
+} as const;
+
+export const PROJECT_USER_STANDARD_FIELD_IDS = {
+  appUserId: '03c7ab33-a04b-43b1-bfc8-31002437ceaf',
+  projectId: '57762cb6-e14b-4691-954e-5ba37821e7d5',
+  email: 'a3b3ac85-ca79-452b-9e90-be351dfb51ca',
+  position: '38226d37-eaf5-4bdd-8b77-3435c3656dc0',
+  createdBy: '3018c082-3591-4660-87e6-aeb2f2bcdad3',
+  searchVector: 'a1ac7649-4d08-42bd-aa13-46cc9f6a570e',
+  timelineActivities: 'bb06668f-0deb-4d66-917b-aaf255870f2c',
+} as const;
+
+export const QUOTATION_STANDARD_FIELD_IDS = {
+  quotationName: '52858625-a71a-49e9-b6c4-eb245b349b61',
+  quotationCode: 'd320578b-98c4-4180-b020-91c098e3572e',
+  supplierQuotationRef: 'c59290a9-8ee7-455c-b069-2a44da1914fc',
+  supplier: '4804f836-b377-40f0-9ab9-aa370f99964b',
+  project: 'de34b4ba-cff8-4a81-84db-d9524950d902',
+  quotationDate: '375ebb73-11c2-4f68-9c0d-4044d71e069e',
+  validUntil: 'c2b56358-de68-476c-8a20-67acc1f9dc37',
+  totalAmount: 'c910934b-a035-4b9d-ba0f-ca7b0991bee4',
+  deliveryFee: '042e7149-eadb-4d5b-bee2-eeee179024d2',
+  currency: '331f960c-982e-4ce5-9395-aceee946d66f',
+  status: 'e645b09a-b8b0-40e5-8e4c-3ded9c6aead0',
+  termsAndConditions: '4ada0ced-3d46-4f26-a239-1749d197cdcf',
+  note: '12501f73-5e2e-4d5b-b2df-5e583d1e3efb',
+  receivedDate: 'b16726a2-f4a6-41a7-9879-d49f566890e8',
+  receivedBy: 'fb9aa2f4-9fe9-422f-98b5-e5fc7b312b00',
+  reviewedBy: '3a2c9c93-c704-431c-bd74-21cf9626a062',
+  reviewedDate: '9b4fb7ba-694a-4b22-8cee-c443fcaf161c',
+  approvedBy: 'eca0c223-285f-47ae-b391-cdc4fcd7e418',
+  approvalDate: 'abe90b1a-c101-4da4-86c7-85c6825676a4',
+  approvalNote: '005ae051-414c-4704-9d29-ebfd2dd797e5',
+  negotiationNote: 'e34b930b-8a97-4b1c-8252-af2e94250b25',
+  negotiationBy: '0a98ec69-17c3-4c7d-92ed-b7a217e3aa04',
+  negotiationDate: '21e62cfa-b5a7-4786-9adb-c7fc37b285b7',
+  revisionCount: '39c2963a-eabd-4caf-aacc-8c109fd4acda',
+  selectionNote: 'fe2ce792-3316-472b-86e3-fe8eb3b70c27',
+  deliveryTime: '2f2bd115-44ba-4df1-8170-8c3b9093f554',
+  paymentTerms: '3fb86fe5-e827-42ae-9732-21bc17d1829b',
+  warrantyPeriod: 'd0893181-7b40-4671-85b3-b22e3e8aacd7',
+  fileId: '375eb625-1b4b-4a61-9e5b-ebde58c6c0b9',
+  position: 'ebfa841a-2a2e-432a-9a9b-c60189cca026',
+  createdBy: '23d3abb7-3977-43de-924b-66dadeccd985',
+  searchVector: 'adbe6e7c-65b2-4a17-9dcb-079b6496a0bc',
+  timelineActivities: '97df61b3-acd5-44bd-90d6-181c837fe2ef',
+} as const;
+
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
@@ -688,10 +815,17 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   dashboard: DASHBOARD_STANDARD_FIELD_IDS,
   favorite: FAVORITE_STANDARD_FIELD_IDS,
   auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
+  appUser: APP_USER_STANDARD_FIELD_IDS,
+  project: PROJECT_STANDARD_FIELD_IDS,
+  projectUser: PROJECT_USER_STANDARD_FIELD_IDS,
   inventory: INVENTORY_STANDARD_FIELD_IDS,
   material: MATERIAL_STANDARD_FIELD_IDS,
+  materialCategory: MATERIAL_CATEGORY_STANDARD_FIELD_IDS,
   materialGroup: MATERIAL_GROUP_STANDARD_FIELD_IDS,
   manufacturer: MANUFACTURER_STANDARD_FIELD_IDS,
+  permission: PERMISSION_STANDARD_FIELD_IDS,
+  jobTitle: JOB_TITLE_STANDARD_FIELD_IDS,
+  role: ROLE_STANDARD_FIELD_IDS,
   messageChannelMessageAssociation:
     MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   messageChannel: MESSAGE_CHANNEL_STANDARD_FIELD_IDS,

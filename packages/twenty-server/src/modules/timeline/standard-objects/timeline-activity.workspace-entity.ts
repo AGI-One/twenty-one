@@ -20,14 +20,22 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { InventoryWorkspaceEntity } from 'src/modules/inventory/standard-objects/inventory.workspace-entity';
+import { JobTitleWorkspaceEntity } from 'src/modules/job-title/standard-objects/job-title.workspace-entity';
 import { ManufacturerWorkspaceEntity } from 'src/modules/manufacturer/standard-objects/manufacturer.workspace-entity';
+import { MaterialCategoryWorkspaceEntity } from 'src/modules/material-category/standard-objects/quotation.workspace-entity';
 import { MaterialGroupWorkspaceEntity } from 'src/modules/material-group/standard-objects/material-group.workspace-entity';
 import { MaterialWorkspaceEntity } from 'src/modules/material/standard-objects/material.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { PermissionWorkspaceEntity } from 'src/modules/permission/standard-objects/permission.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { ProjectUserWorkspaceEntity } from 'src/modules/project-user/standard-objects/project-user.workspace-entity';
+import { ProjectWorkspaceEntity } from 'src/modules/project/standard-objects/project.workspace-entity';
+import { QuotationWorkspaceEntity } from 'src/modules/quotation/standar-objects/quotation.workspace-entity';
+import { RoleWorkspaceEntity } from 'src/modules/role/standard-objects/role.workspace-entity';
 import { SupplierWorkspaceEntity } from 'src/modules/supplier/standard-objects/supplier.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { AppUserWorkspaceEntity } from 'src/modules/user/standard-objects/user.workspace-entity';
 import { WarehouseWorkspaceEntity } from 'src/modules/warehouse/standard-objects/warehouse.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -315,6 +323,38 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   materialId: string | null;
 
   @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.materialCategory,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Material Category`,
+    description: msg`Event material category`,
+    icon: 'IconCategory',
+    inverseSideTarget: () => MaterialCategoryWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  materialCategory: Relation<MaterialCategoryWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('materialCategory')
+  materialCategoryId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.quotation,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Quotation`,
+    description: msg`Event quotation`,
+    icon: 'IconFileText',
+    inverseSideTarget: () => QuotationWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  quotation: Relation<QuotationWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('quotation')
+  quotationId: string | null;
+
+  @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.supplier,
     type: RelationType.MANY_TO_ONE,
     label: msg`Supplier`,
@@ -361,6 +401,101 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('materialGroup')
   materialGroupId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.role,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Role`,
+    description: msg`Event role`,
+    icon: 'IconUsers',
+    inverseSideTarget: () => RoleWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  role: Relation<RoleWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('role')
+  roleId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.appUser,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`App User`,
+    description: msg`Event app user`,
+    icon: 'IconUser',
+    inverseSideTarget: () => AppUserWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  appUser: Relation<AppUserWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('appUser')
+  appUserId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.permission,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Permission`,
+    description: msg`Event permission`,
+    icon: 'IconShield',
+    inverseSideTarget: () => PermissionWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  permission: Relation<PermissionWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('permission')
+  permissionId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.jobTitle,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Job Title`,
+    description: msg`Event job title`,
+    icon: 'IconBriefcase',
+    inverseSideTarget: () => JobTitleWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  jobTitle: Relation<JobTitleWorkspaceEntity> | null;
+  @WorkspaceJoinColumn('jobTitle')
+  jobTitleId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.project,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Project`,
+    description: msg`Event project`,
+    icon: 'IconBriefcase',
+    inverseSideTarget: () => ProjectWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  project: Relation<ProjectWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('project')
+  projectId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.projectUser,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Project User`,
+    description: msg`Event project user`,
+    icon: 'IconUserPlus',
+    inverseSideTarget: () => ProjectUserWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  projectUser: Relation<ProjectUserWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('projectUser')
+  projectUserId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,

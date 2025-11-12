@@ -1,17 +1,22 @@
 //the higher the number, the higher the priority
 export const STANDARD_OBJECTS_BY_PRIORITY_RANK = {
   person: 5,
+  appUser: 5,
+  project: 5,
+  projectUser: 4,
   company: 4,
   opportunity: 3,
-
   material: 3,
   supplier: 3,
   manufacturer: 3,
   materialGroup: 2,
+  materialCategory: 2,
+  quotation: 2,
   note: 2,
-
+  role: 2,
   task: 1,
-
   warehouse: 2,
   inventory: 3,
+  permission: 0,
+  jobTitle: 0,
 };
