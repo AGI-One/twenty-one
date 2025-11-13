@@ -28,7 +28,7 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 // Import related entities
-import { BoQWorkspaceEntity } from 'src/modules/boq/standard-objects/boq.workspace-entity';
+import { BoqWorkspaceEntity } from 'src/modules/boq/standard-objects/boq.workspace-entity';
 import { InventoryWorkspaceEntity } from 'src/modules/inventory/standard-objects/inventory.workspace-entity';
 import { MaterialApprovalWorkspaceEntity } from 'src/modules/material-approval/standard-objects/material-approval.workspace-entity';
 import { MaterialCategoryWorkspaceEntity } from 'src/modules/material-category/standard-objects/material-category.workspace-entity';
@@ -315,11 +315,11 @@ export class MaterialWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`BoQs`,
     description: msg`Bills of quantities`,
     icon: 'IconListNumbers',
-    inverseSideTarget: () => BoQWorkspaceEntity,
+    inverseSideTarget: () => BoqWorkspaceEntity,
     inverseSideFieldKey: 'material',
   })
   @WorkspaceIsNullable()
-  boqs: Relation<BoQWorkspaceEntity[]>;
+  boqs: Relation<BoqWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MATERIAL_STANDARD_FIELD_IDS.timelineActivities,

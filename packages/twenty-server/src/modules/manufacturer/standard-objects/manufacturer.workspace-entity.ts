@@ -1,8 +1,12 @@
 import { msg } from '@lingui/core/macro';
-import { ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
+import {
+  ActorMetadata,
+  FieldMetadataType,
+  RelationOnDeleteAction,
+} from 'twenty-shared/types';
+import { Relation } from 'typeorm/common/RelationType';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
@@ -19,11 +23,11 @@ import { MANUFACTURER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/wo
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-    type FieldTypeAndNameMetadata,
-    getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 // Import related entities
-import { BoQWorkspaceEntity } from 'src/modules/boq/standard-objects/boq.workspace-entity';
+import { BoqWorkspaceEntity } from 'src/modules/boq/standard-objects/boq.workspace-entity';
 import { MaterialApprovalWorkspaceEntity } from 'src/modules/material-approval/standard-objects/material-approval.workspace-entity';
 import { MaterialGroupWorkspaceEntity } from 'src/modules/material-group/standard-objects/material-group.workspace-entity';
 import { MaterialPriceWorkspaceEntity } from 'src/modules/material-price/standard-objects/material-price.workspace-entity';
@@ -166,13 +170,14 @@ export class ManufacturerWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: MANUFACTURER_STANDARD_FIELD_IDS.boqs,
     type: RelationType.ONE_TO_MANY,
     label: msg`BoQs`,
-    description: msg`Bills of quantities for this manufacturer`,
+    description: msg`Manufacturer BoQs`,
     icon: 'IconListNumbers',
-    inverseSideTarget: () => BoQWorkspaceEntity,
+    inverseSideTarget: () => BoqWorkspaceEntity,
     inverseSideFieldKey: 'manufacturer',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  boqs: Relation<BoQWorkspaceEntity[]>;
+  boqs: Relation<BoqWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MANUFACTURER_STANDARD_FIELD_IDS.timelineActivities,

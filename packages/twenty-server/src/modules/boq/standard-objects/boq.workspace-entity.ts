@@ -61,7 +61,7 @@ export const SEARCH_FIELDS_FOR_BOQ: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: BOQ_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSearchable()
-export class BoQWorkspaceEntity extends BaseWorkspaceEntity {
+export class BoqWorkspaceEntity extends BaseWorkspaceEntity {
   // Basic Information
   @WorkspaceField({
     standardId: BOQ_STANDARD_FIELD_IDS.classification,

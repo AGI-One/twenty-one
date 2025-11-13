@@ -1,6 +1,6 @@
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { BoQWorkspaceEntity } from 'src/modules/boq/standard-objects/boq.workspace-entity';
+import { BoqWorkspaceEntity } from 'src/modules/boq/standard-objects/boq.workspace-entity';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -102,7 +102,7 @@ export const standardObjectMetadataDefinitions = [
   PriceContractWorkspaceEntity,
   MaterialRequestWorkspaceEntity,
   MaterialApprovalWorkspaceEntity,
-  BoQWorkspaceEntity,
+  BoqWorkspaceEntity,
   QuotationWorkspaceEntity,
   QuotationItemWorkspaceEntity,
 ];
