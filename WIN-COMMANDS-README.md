@@ -34,7 +34,7 @@ Chạy trực tiếp các script trong thư mục `scripts\`:
 #### Quản lý Database
 ```powershell
 DB-Up                    # Khởi động tất cả database services
-DB-Down                  # Dừng tất cả database services  
+DB-Down                  # Dừng tất cả database services
 DB-Reset                 # Reset databases (xóa toàn bộ dữ liệu)
 DB-Setup                 # Setup databases với seed data
 DB-Setup-Production      # Setup databases cho production (không seed)

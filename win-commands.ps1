@@ -43,7 +43,7 @@ function DB-Reset {
     #>
     Write-Warning "Resetting databases (deleting all data)..."
     DB-Down
-    
+
     Write-Clean "Removing Docker volumes for twenty-one project only..."
     $volumes = @(
         "database_twenty_db_data",
@@ -59,7 +59,7 @@ function DB-Reset {
         "database_minio_data",
         "minio_data"
     )
-    
+
     foreach ($volume in $volumes) {
         try {
             docker volume rm -f $volume 2>$null
@@ -68,7 +68,7 @@ function DB-Reset {
             Write-Host "  - Not found: $volume" -ForegroundColor DarkGray
         }
     }
-    
+
     Write-Success "Database volumes and data cleared."
     DB-Up
     Write-Success "Databases reset and restarted!"
@@ -266,25 +266,25 @@ function Clean-All {
     Xóa tất cả node_modules và build artifacts
     #>
     Write-Warning "Cleaning all node_modules and build artifacts..."
-    
+
     # Remove node_modules
     if (Test-Path "node_modules") {
         Remove-Item -Recurse -Force "node_modules"
         Write-Clean "Removed root node_modules"
     }
-    
+
     # Remove package node_modules
     Get-ChildItem -Path "packages" -Recurse -Directory -Filter "node_modules" | ForEach-Object {
         Remove-Item -Recurse -Force $_.FullName
         Write-Clean "Removed $($_.FullName)"
     }
-    
+
     # Remove dist folders
     Get-ChildItem -Path "packages" -Recurse -Directory -Filter "dist" | ForEach-Object {
         Remove-Item -Recurse -Force $_.FullName
         Write-Clean "Removed $($_.FullName)"
     }
-    
+
     Write-Success "Cleanup completed."
 }
 
@@ -317,7 +317,7 @@ function Show-Help {
     Write-Host "`nĐể sử dụng, import file này vào PowerShell session:" -ForegroundColor Yellow
     Write-Host "  . .\win-commands.ps1" -ForegroundColor Cyan
     Write-Host "`nSau đó gọi các function sau:" -ForegroundColor Yellow
-    
+
     Write-Host "`n📦 DATABASE MANAGEMENT:" -ForegroundColor Green
     Write-Host "  DB-Up                  - Khởi động tất cả database services"
     Write-Host "  DB-Down                - Dừng tất cả database services"
@@ -326,14 +326,14 @@ function Show-Help {
     Write-Host "  DB-Setup-Production    - Setup databases cho production"
     Write-Host "  DB-Logs                - Hiển thị logs của databases"
     Write-Host "  DB-Status              - Hiển thị trạng thái databases"
-    
+
     Write-Host "`n🔧 INDIVIDUAL SERVICES:" -ForegroundColor Green
     Write-Host "  Postgres-Up            - Khởi động PostgreSQL"
     Write-Host "  Redis-Up               - Khởi động Redis"
     Write-Host "  ClickHouse-Up          - Khởi động ClickHouse"
     Write-Host "  Grafana-Up             - Khởi động Grafana"
     Write-Host "  OTLP-Up                - Khởi động OpenTelemetry Collector"
-    
+
     Write-Host "`n💻 DEVELOPMENT:" -ForegroundColor Green
     Write-Host "  Dev-Server             - Chạy backend development server"
     Write-Host "  Dev-Front              - Chạy frontend development server"
@@ -342,13 +342,13 @@ function Show-Help {
     Write-Host "  Test-All               - Chạy tất cả tests"
     Write-Host "  Lint-All               - Chạy linter"
     Write-Host "  Format-All             - Format code"
-    
+
     Write-Host "`n🧹 UTILITIES:" -ForegroundColor Green
     Write-Host "  Clean-All              - Xóa node_modules và build artifacts"
     Write-Host "  Install-Deps           - Cài đặt dependencies"
     Write-Host "  Fresh-Install          - Xóa và cài đặt lại từ đầu"
     Write-Host "  Show-Help              - Hiển thị help này"
-    
+
     Write-Host "`n📝 VÍ DỤ SỬ DỤNG:" -ForegroundColor Cyan
     Write-Host "  DB-Up                  # Khởi động databases"
     Write-Host "  DB-Setup               # Setup databases"
