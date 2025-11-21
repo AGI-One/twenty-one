@@ -7,7 +7,7 @@ import {
     BASE_OBJECT_STANDARD_FIELD_IDS,
     QUOTATION_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 export const quotationsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],

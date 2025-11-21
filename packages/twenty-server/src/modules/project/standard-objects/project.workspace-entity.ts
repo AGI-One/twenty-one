@@ -21,7 +21,6 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PROJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
     type FieldTypeAndNameMetadata,
     getTsVectorColumnExpressionFromFields,
@@ -35,6 +34,7 @@ import { PriceContractWorkspaceEntity } from 'src/modules/price-contract/standar
 import { ProjectUserWorkspaceEntity } from 'src/modules/project-user/standard-objects/project-user.workspace-entity';
 import { QuotationWorkspaceEntity } from 'src/modules/quotation/standar-objects/quotation.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 const PROJECT_CODE_FIELD_NAME = 'projectCode';
 const PROJECT_NAME_FIELD_NAME = 'projectName';

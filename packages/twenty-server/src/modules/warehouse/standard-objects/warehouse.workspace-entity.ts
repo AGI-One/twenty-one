@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
-  ActorMetadata,
-  FieldMetadataType,
-  RelationOnDeleteAction,
+    ActorMetadata,
+    FieldMetadataType,
+    RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -21,13 +21,13 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WAREHOUSE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  type FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    type FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { InventoryWorkspaceEntity } from 'src/modules/inventory/standard-objects/inventory.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 const WAREHOUSE_CODE_FIELD_NAME = 'warehouseCode';
 

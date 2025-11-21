@@ -4,10 +4,10 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 import {
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  QUOTATION_ITEM_STANDARD_FIELD_IDS,
+    BASE_OBJECT_STANDARD_FIELD_IDS,
+    QUOTATION_ITEM_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 export const quotationItemsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],

@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
-  ActorMetadata,
+    ActorMetadata,
+    FieldMetadataType,
+    RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -15,12 +15,12 @@ import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { INVENTORY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MaterialWorkspaceEntity } from 'src/modules/material/standard-objects/material.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WarehouseWorkspaceEntity } from 'src/modules/warehouse/standard-objects/warehouse.workspace-entity';
-import { MaterialWorkspaceEntity } from 'src/modules/material/standard-objects/material.workspace-entity';
-import { INVENTORY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.inventory,
