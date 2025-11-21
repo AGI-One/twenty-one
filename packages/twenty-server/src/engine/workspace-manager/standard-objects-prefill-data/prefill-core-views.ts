@@ -18,6 +18,7 @@ import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { appUsersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/app-users-all.view';
 import { boqsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/boqs-all.view';
+import { calendarEventsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { inventoriesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/inventories-all.view';
@@ -32,6 +33,8 @@ import { materialPricesAllView } from 'src/engine/workspace-manager/standard-obj
 import { materialPurchaseRequestsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/material-purchase-requests-all.view';
 import { materialRequestsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/material-requests-all.view';
 import { materialsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/materials-all.view';
+import { messageThreadsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view';
+import { messagesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -50,6 +53,7 @@ import { warehousesAllView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { workspaceMembersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view';
 import { projectUsersAllView } from 'src/modules/project-user/standard-objects/views/project-users-all.view';
 
 type PrefillCoreViewsArgs = {
@@ -102,6 +106,10 @@ export const prefillCoreViews = async ({
     boqsAllView(objectMetadataItems, true),
     materialOrdersAllView(objectMetadataItems, true),
     materialCategoriesAllView(objectMetadataItems, true),
+    workspaceMembersAllView(objectMetadataItems, true),
+    messagesAllView(objectMetadataItems, true),
+    messageThreadsAllView(objectMetadataItems, true),
+    calendarEventsAllView(objectMetadataItems, true),
   ];
 
   const queryRunner = coreDataSource.createQueryRunner();

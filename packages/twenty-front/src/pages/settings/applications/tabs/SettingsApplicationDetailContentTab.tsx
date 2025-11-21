@@ -56,7 +56,7 @@ export const SettingsApplicationDetailContentTab = ({
             title={t`Application agents`}
             description={t`Agents created by application`}
           />
-          <SettingsAIAgentsTable withSearchBar={false} />
+          <SettingsAIAgentsTable />
         </Section>
       )}
       {shouldDisplayObjects && (
@@ -66,8 +66,7 @@ export const SettingsApplicationDetailContentTab = ({
             description={t`Objects created by application`}
           />
           <SettingsObjectTable
-            activeObjects={applicationObjectMetadataItems}
-            inactiveObjects={[]}
+            objectMetadataItems={applicationObjectMetadataItems}
             withSearchBar={false}
           />
         </Section>

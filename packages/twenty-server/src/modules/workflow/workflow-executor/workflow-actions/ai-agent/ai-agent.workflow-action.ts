@@ -80,13 +80,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       const { result, usage } = await this.aiAgentExecutionService.executeAgent(
         {
           agent,
-          schema: step.settings.outputSchema,
           userPrompt: resolveInput(prompt, context) as string,
           actorContext: executionContext.isActingOnBehalfOfUser
             ? executionContext.initiator
             : undefined,
           rolePermissionConfig: executionContext.rolePermissionConfig,
-          userWorkspaceId: executionContext.userWorkspaceId,
         },
       );
 

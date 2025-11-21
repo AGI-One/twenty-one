@@ -1,9 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateObject, generateText, stepCountIs, ToolSet } from 'ai';
-import { Repository } from 'typeorm';
+import {
+  generateObject,
+  generateText,
+  jsonSchema,
+  stepCountIs,
+  ToolSet,
+} from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
@@ -17,10 +23,8 @@ import {
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
-import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 @Injectable()
 export class AiAgentExecutorService {
@@ -38,7 +42,6 @@ export class AiAgentExecutorService {
     workspaceId: string,
     actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
-    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
@@ -77,7 +80,6 @@ export class AiAgentExecutorService {
       effectiveRoleContext,
       workspaceId,
       actorContext,
-      userWorkspaceId,
     );
 
     return {
@@ -88,18 +90,14 @@ export class AiAgentExecutorService {
 
   async executeAgent({
     agent,
-    schema,
     userPrompt,
     actorContext,
     rolePermissionConfig,
-    userWorkspaceId,
   }: {
     agent: AgentEntity | null;
-    schema: OutputSchema;
     userPrompt: string;
     actorContext?: ActorMetadata;
     rolePermissionConfig?: RolePermissionConfig;
-    userWorkspaceId?: string;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
@@ -111,7 +109,6 @@ export class AiAgentExecutorService {
             agent.workspaceId,
             actorContext,
             rolePermissionConfig,
-            userWorkspaceId,
           )
         : {};
 
@@ -126,12 +123,18 @@ export class AiAgentExecutorService {
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
-      if (Object.keys(schema).length === 0) {
+      const agentSchema =
+        agent?.responseFormat?.type === 'json'
+          ? agent.responseFormat.schema
+          : undefined;
+
+      if (!agentSchema) {
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
         };
       }
+
       const output = await generateObject({
         system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
         model: registeredModel.model,
@@ -140,12 +143,12 @@ export class AiAgentExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        schema: convertOutputSchemaToZod(schema),
+        schema: jsonSchema(agentSchema),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       return {
-        result: output.object,
+        result: output.object as object,
         usage: {
           inputTokens:
             (textResponse.usage?.inputTokens ?? 0) +
