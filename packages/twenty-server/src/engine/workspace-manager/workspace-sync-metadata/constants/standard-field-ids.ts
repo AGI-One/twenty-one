@@ -202,7 +202,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
-  linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c204f6',
+  linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
 } as const;
 
 export const FAVORITE_STANDARD_FIELD_IDS = {

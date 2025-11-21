@@ -1,4 +1,3 @@
-TEMPORARILY DISABLED - Workflow was failing frequently
 name: 'Pull docs translations from Crowdin'
 
 permissions:
