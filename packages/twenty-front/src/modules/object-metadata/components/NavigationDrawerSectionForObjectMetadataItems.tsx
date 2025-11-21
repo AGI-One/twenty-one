@@ -15,22 +15,6 @@ const ORDERED_STANDARD_OBJECTS: string[] = [
   CoreObjectNameSingular.Opportunity,
   CoreObjectNameSingular.Task,
   CoreObjectNameSingular.Note,
-  CoreObjectNameSingular.Material,
-  CoreObjectNameSingular.Supplier,
-  CoreObjectNameSingular.Manufacturer,
-  CoreObjectNameSingular.MaterialGroup,
-  CoreObjectNameSingular.Inventory,
-  CoreObjectNameSingular.Warehouse,
-  CoreObjectNameSingular.Quotation,
-  CoreObjectNameSingular.QuotationItem,
-  CoreObjectNameSingular.MaterialPurchaseRequest,
-  CoreObjectNameSingular.MaterialOrder,
-  CoreObjectNameSingular.MaterialPrice,
-  CoreObjectNameSingular.MaterialPriceHistory,
-  CoreObjectNameSingular.PriceContract,
-  CoreObjectNameSingular.MaterialRequest,
-  CoreObjectNameSingular.MaterialApproval,
-  CoreObjectNameSingular.BoQ,
 ];
 
 type NavigationDrawerSectionForObjectMetadataItemsProps = {
