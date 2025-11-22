@@ -11,22 +11,22 @@ import { SharePointService } from 'src/engine/core-modules/sharepoint/sharepoint
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-    DataSourceEntity,
-    DataSourceTypeEnum,
+  DataSourceEntity,
+  DataSourceTypeEnum,
 } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import {
-    ROLES_PERMISSIONS,
-    WorkspacePermissionsCacheService,
+  ROLES_PERMISSIONS,
+  WorkspacePermissionsCacheService,
 } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { SharePointWorkspaceDataSource } from 'src/engine/twenty-orm/datasource/sharepoint-workspace.datasource';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
-    TwentyORMException,
-    TwentyORMExceptionCode,
+  TwentyORMException,
+  TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
@@ -378,19 +378,26 @@ export class WorkspaceDatasourceFactory {
     cachedRolesPermissionsVersion: string,
     cachedRolesPermissions: ObjectsPermissionsByRoleId,
   ): Promise<SharePointWorkspaceDataSource> {
-    // Parse SharePoint configuration from URL or schema
-    // Format: sharepoint://{tenantId}/{siteId}?siteName={siteName}
-    const sharePointUrl = dataSourceMetadata.url || '';
-    const urlParts = sharePointUrl.replace('sharepoint://', '').split('/');
-    const tenantId = urlParts[0] || '';
-    const siteId = urlParts[1]?.split('?')[0] || '';
+    // Get SharePoint configuration from ENV and workspace
+    const tenantId = process.env.WORKSPACE_TENANT_ID;
 
-    const urlParams = new URLSearchParams(sharePointUrl.split('?')[1] || '');
-    const siteName = urlParams.get('siteName') || undefined;
-
-    if (!tenantId || !siteId) {
+    if (!tenantId) {
       throw new TwentyORMException(
-        `Invalid SharePoint datasource configuration for workspace ${workspaceId}`,
+        `WORKSPACE_TENANT_ID must be set when using SharePoint datasource`,
+        TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND,
+      );
+    }
+
+    // Get workspace to read sharePointSiteId
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    const siteId = workspace?.sharePointSiteId;
+
+    if (!siteId) {
+      throw new TwentyORMException(
+        `SharePoint site ID not found for workspace ${workspaceId}. Ensure workspace was initialized with SharePoint.`,
         TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND,
       );
     }
@@ -418,7 +425,6 @@ export class WorkspaceDatasourceFactory {
         workspaceId,
         tenantId,
         siteId,
-        siteName,
       },
     );
 

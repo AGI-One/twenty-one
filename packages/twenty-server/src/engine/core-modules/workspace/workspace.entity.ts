@@ -100,6 +100,10 @@ export class WorkspaceEntity {
   @Column({ type: 'integer', default: 14 })
   trashRetentionDays: number;
 
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  sharePointSiteId: string | null;
+
   // Relations
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,

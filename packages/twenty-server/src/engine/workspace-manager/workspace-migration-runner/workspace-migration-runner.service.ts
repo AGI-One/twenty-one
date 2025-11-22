@@ -5,6 +5,8 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner, Table, type TableColumn } from 'typeorm';
 
+import { DataSourceTypeEnum } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   IndexMetadataException,
   IndexMetadataExceptionCode,
@@ -37,12 +39,19 @@ export class WorkspaceMigrationRunnerService {
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationColumnService: WorkspaceMigrationColumnService,
+    private readonly dataSourceService: DataSourceService,
   ) {}
 
   public async executeMigrationFromPendingMigrationsWithinTransaction(
     workspaceId: string,
     transactionQueryRunner: QueryRunner,
   ): Promise<WorkspaceMigrationTableAction[]> {
+    // Check datasource type - skip PostgreSQL migrations for SharePoint
+    const dataSource =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
     const pendingMigrations =
       await this.workspaceMigrationService.getPendingMigrations(
         workspaceId,
@@ -53,6 +62,23 @@ export class WorkspaceMigrationRunnerService {
       return [];
     }
 
+    // For SharePoint datasource, mark migrations as applied without executing PostgreSQL operations
+    if (dataSource.type === DataSourceTypeEnum.SHAREPOINT) {
+      this.logger.log(
+        'SharePoint datasource detected - marking migrations as applied without executing PostgreSQL operations',
+      );
+
+      for (const migration of pendingMigrations) {
+        await transactionQueryRunner.query(
+          `UPDATE "core"."workspaceMigration" SET "appliedAt" = NOW() WHERE "id" = $1 AND "workspaceId" = $2`,
+          [migration.id, workspaceId],
+        );
+      }
+
+      return [];
+    }
+
+    // PostgreSQL datasource - execute migrations normally
     const migrationActionsWithParent = pendingMigrations.flatMap(
       (pendingMigration) =>
         (pendingMigration.migrations || []).map((tableAction) => ({

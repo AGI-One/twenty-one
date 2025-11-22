@@ -4,19 +4,16 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 
 import {
-    SharePointAuthToken,
-    SharePointTenantInfo,
+  SharePointAuthToken,
+  SharePointTenantInfo,
 } from 'src/engine/core-modules/sharepoint/types/sharepoint-auth.type';
 import {
-    SharePointList,
-    SharePointListCreationRequest,
-    SharePointListItem,
+  SharePointList,
+  SharePointListCreationRequest,
+  SharePointListItem,
 } from 'src/engine/core-modules/sharepoint/types/sharepoint-list.type';
 import { SharePointQueryOptions } from 'src/engine/core-modules/sharepoint/types/sharepoint-query-options.type';
-import {
-    SharePointSite,
-    SharePointSiteCreationRequest,
-} from 'src/engine/core-modules/sharepoint/types/sharepoint-site.type';
+import { SharePointSite } from 'src/engine/core-modules/sharepoint/types/sharepoint-site.type';
 
 @Injectable()
 export class SharePointService {
@@ -168,7 +165,7 @@ export class SharePointService {
   }
 
   /**
-   * Get or create the Twenty site for a tenant
+   * Get the Twenty site for a tenant (must be created manually)
    */
   async getTwentySiteForTenant(
     tenantId: string,
@@ -178,29 +175,158 @@ export class SharePointService {
     const accessToken = token || (await this.getAppOnlyToken(tenantId));
     const siteName = `Twenty - ${tenantName || 'Default'}`;
 
-    // Try to find existing site
+    // Check if site URL is configured in ENV
+    const siteHostname = this.configService.get<string>(
+      'sharepoint.siteHostname',
+    );
+    const sitePath = this.configService.get<string>('sharepoint.sitePath');
+
+    // If direct URL is configured, try that first
+    if (siteHostname && sitePath) {
+      this.logger.log(
+        `[SharePoint] Using configured site: ${siteHostname}${sitePath}`,
+      );
+
+      try {
+        const response = await this.httpClient.get(
+          `https://graph.microsoft.com/v1.0/sites/${siteHostname}:${sitePath}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+
+        const site = response.data as SharePointSite;
+
+        this.logger.log(
+          `[SharePoint] Found site via direct URL: ${site.displayName} (${site.webUrl})`,
+        );
+        this.logger.log(`[SharePoint] Site object:`, {
+          id: site.id,
+          name: site.name,
+          displayName: site.displayName,
+          webUrl: site.webUrl,
+          fullResponse: JSON.stringify(response.data, null, 2),
+        });
+
+        return site;
+      } catch (error) {
+        this.logger.warn(
+          `[SharePoint] Could not get site at ${siteHostname}${sitePath}`,
+          {
+            error: error.message,
+            status: error.response?.status,
+          },
+        );
+      }
+    }
+
+    // Fallback to search by name
     const existingSite = await this.findTwentySite(siteName, accessToken);
 
     if (existingSite) {
       this.logger.log(
-        `Found existing Twenty site: ${existingSite.displayName}`,
+        `Found existing Twenty site: ${existingSite.displayName} (${existingSite.webUrl})`,
       );
 
       return existingSite;
     }
 
-    // Create new site
-    this.logger.log(`Creating new Twenty site: ${siteName}`);
+    // Site must be created manually
+    const rootSite = await this.getRootSite(accessToken);
+    const siteUrlName = `twenty-${(tenantName || 'default').toLowerCase().replace(/\s+/g, '-')}`;
+    const expectedUrl = `${rootSite.webUrl}/sites/${siteUrlName}`;
 
-    return this.createTwentySite(
-      siteName,
-      tenantName || 'Default',
-      accessToken,
+    throw new Error(
+      `SharePoint site not found. Please create a site manually:\n` +
+        `1. Go to SharePoint Admin Center\n` +
+        `2. Create a new Team Site\n` +
+        `3. Set name to: ${siteName}\n` +
+        `4. After creating, add these to .env:\n` +
+        `   SHAREPOINT_SITE_HOSTNAME=<your-tenant>.sharepoint.com\n` +
+        `   SHAREPOINT_SITE_PATH=/sites/<your-site-url>\n` +
+        `5. Or wait a few hours for search index to update`,
     );
   }
 
   /**
-   * Find a Twenty site by name
+   * Find site by URL path
+   */
+  async findSiteByUrl(
+    siteUrlPath: string,
+    token: string,
+  ): Promise<SharePointSite | null> {
+    const graphApiBaseUrl = this.configService.get<string>(
+      'sharepoint.graphApiBaseUrl',
+    );
+
+    try {
+      // Try to get site by path: /sites/{site-url}
+      const response = await this.httpClient.get(
+        `${graphApiBaseUrl}/sites/root:/sites/${siteUrlPath}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data as SharePointSite;
+    } catch (error) {
+      // Site not found
+      if (error.response?.status === 404) {
+        return null;
+      }
+
+      this.logger.error(`Error finding site by URL: ${siteUrlPath}`, {
+        error: error.message,
+        status: error.response?.status,
+      });
+
+      return null;
+    }
+  }
+
+  /**
+   * Get root SharePoint site for the tenant
+   */
+  async getRootSite(token: string): Promise<SharePointSite> {
+    const graphApiBaseUrl = this.configService.get<string>(
+      'sharepoint.graphApiBaseUrl',
+    );
+
+    try {
+      const response = await this.httpClient.get(
+        `${graphApiBaseUrl}/sites/root`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const rootSite = response.data as SharePointSite;
+
+      this.logger.log(`Using root SharePoint site: ${rootSite.displayName}`);
+
+      return rootSite;
+    } catch (error) {
+      this.logger.error(`Failed to access root site`, {
+        error: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: `${graphApiBaseUrl}/sites/root`,
+      });
+      throw new Error(
+        `Could not access SharePoint root site. ${error.response?.data?.error?.message || error.message}`,
+      );
+    }
+  }
+
+  /**
+   * Find a Twenty site by name (deprecated - keeping for reference)
    */
   async findTwentySite(
     siteName: string,
@@ -210,64 +336,94 @@ export class SharePointService {
       'sharepoint.graphApiBaseUrl',
     );
 
-    try {
-      const response = await this.httpClient.get(
-        `${graphApiBaseUrl}/sites?search=${encodeURIComponent(siteName)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+    this.logger.log(`[SharePoint] Searching for site with name: ${siteName}`);
 
-      const sites = response.data.value as SharePointSite[];
+    try {
+      // Try different search methods
+      const searchMethods = [
+        {
+          name: 'Full name search',
+          url: `${graphApiBaseUrl}/sites?search=${encodeURIComponent(siteName)}`,
+        },
+        {
+          name: 'Partial name search (Twenty)',
+          url: `${graphApiBaseUrl}/sites?search=Twenty`,
+        },
+        {
+          name: 'Wildcard search',
+          url: `${graphApiBaseUrl}/sites?search=*`,
+        },
+        {
+          name: 'List all sites',
+          url: `${graphApiBaseUrl}/sites?$select=id,name,displayName,webUrl`,
+        },
+      ];
+
+      let sites: SharePointSite[] = [];
+
+      for (const method of searchMethods) {
+        this.logger.log(`[SharePoint] Trying: ${method.name}`);
+
+        try {
+          const response = await this.httpClient.get(method.url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          sites = response.data.value as SharePointSite[];
+
+          this.logger.log(
+            `[SharePoint] ${method.name} returned ${sites.length} sites`,
+          );
+
+          if (sites.length > 0) {
+            this.logger.log(`[SharePoint] Available sites:`, {
+              sites: sites.map((s) => ({
+                id: s.id,
+                name: s.name,
+                displayName: s.displayName,
+                webUrl: s.webUrl,
+              })),
+            });
+            break; // Found some sites, stop searching
+          }
+        } catch (err) {
+          this.logger.warn(`[SharePoint] ${method.name} failed:`, {
+            error: err.message,
+          });
+        }
+      }
+
+      if (sites.length === 0) {
+        this.logger.error(`[SharePoint] All search methods returned no sites`);
+
+        return null;
+      }
+
       const foundSite = sites.find(
         (site) => site.displayName === siteName || site.name.includes('Twenty'),
       );
 
+      if (foundSite) {
+        this.logger.log(
+          `[SharePoint] Found site: ${foundSite.displayName} (${foundSite.webUrl})`,
+        );
+      } else {
+        this.logger.warn(
+          `[SharePoint] No site found with displayName="${siteName}" or name containing "Twenty"`,
+        );
+      }
+
       return foundSite || null;
     } catch (error) {
-      this.logger.error(`Error searching for site: ${siteName}`, { error });
+      this.logger.error(`Error searching for site: ${siteName}`, {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
 
       return null;
-    }
-  }
-
-  /**
-   * Create a new Twenty SharePoint site
-   */
-  async createTwentySite(
-    siteName: string,
-    tenantName: string,
-    token: string,
-  ): Promise<SharePointSite> {
-    const graphApiBaseUrl = this.configService.get<string>(
-      'sharepoint.graphApiBaseUrl',
-    );
-
-    const siteRequest: SharePointSiteCreationRequest = {
-      displayName: siteName,
-      name: `twenty-${tenantName.toLowerCase().replace(/\s+/g, '-')}`,
-      description: `Twenty CRM workspace for ${tenantName}`,
-    };
-
-    try {
-      const response = await this.httpClient.post(
-        `${graphApiBaseUrl}/sites/root/sites`,
-        siteRequest,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      this.logger.log(`Created SharePoint site: ${siteName}`);
-
-      return response.data as SharePointSite;
-    } catch (error) {
-      this.logger.error(`Failed to create site: ${siteName}`, { error });
-      throw new Error(`Could not create SharePoint site: ${siteName}`);
     }
   }
 
@@ -337,16 +493,23 @@ export class SharePointService {
       'sharepoint.graphApiBaseUrl',
     );
 
+    const payload = {
+      displayName: listRequest.displayName,
+      description: listRequest.description,
+      list: {
+        template: listRequest.template || 'genericList',
+      },
+    };
+
+    this.logger.debug(`Creating list with payload:`, {
+      url: `${graphApiBaseUrl}/sites/${siteId}/lists`,
+      payload,
+    });
+
     try {
       const response = await this.httpClient.post(
         `${graphApiBaseUrl}/sites/${siteId}/lists`,
-        {
-          displayName: listRequest.displayName,
-          description: listRequest.description,
-          list: {
-            template: listRequest.template || 'genericList',
-          },
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -359,9 +522,16 @@ export class SharePointService {
       return response.data as SharePointList;
     } catch (error) {
       this.logger.error(`Failed to create list: ${listRequest.displayName}`, {
-        error,
+        error: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        url: `${graphApiBaseUrl}/sites/${siteId}/lists`,
+        payload,
       });
-      throw new Error(`Could not create list: ${listRequest.displayName}`);
+      throw new Error(
+        `Could not create list: ${listRequest.displayName}. ${error.response?.data?.error?.message || error.message}`,
+      );
     }
   }
 

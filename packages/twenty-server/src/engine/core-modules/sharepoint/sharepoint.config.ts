@@ -8,6 +8,8 @@ export interface SharePointConfig {
   graphApiBaseUrl: string;
   loginBaseUrl: string;
   defaultScope: string;
+  siteHostname?: string; // Optional: e.g., "agiviet.sharepoint.com"
+  sitePath?: string; // Optional: e.g., "/sites/twenty-tdi-group"
 }
 
 export default registerAs('sharepoint', (): SharePointConfig => {
@@ -23,5 +25,7 @@ export default registerAs('sharepoint', (): SharePointConfig => {
     graphApiBaseUrl: 'https://graph.microsoft.com/v1.0',
     loginBaseUrl: 'https://login.microsoftonline.com',
     defaultScope: 'https://graph.microsoft.com/.default',
+    siteHostname: process.env.SHAREPOINT_SITE_HOSTNAME, // e.g., "agiviet.sharepoint.com"
+    sitePath: process.env.SHAREPOINT_SITE_PATH, // e.g., "/sites/twenty-tdi-group"
   };
 });

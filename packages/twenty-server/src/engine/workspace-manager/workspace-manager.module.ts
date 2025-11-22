@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { SharePointModule } from 'src/engine/core-modules/sharepoint/sharepoint.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
@@ -36,6 +37,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     FeatureFlagModule,
     PermissionsModule,
     AgentModule,
+    SharePointModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     RoleModule,
     UserRoleModule,

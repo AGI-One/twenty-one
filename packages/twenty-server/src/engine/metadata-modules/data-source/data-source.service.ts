@@ -8,7 +8,7 @@ import {
   DataSourceExceptionCode,
 } from 'src/engine/metadata-modules/data-source/data-source.exception';
 
-import { DataSourceEntity } from './data-source.entity';
+import { DataSourceEntity, DataSourceTypeEnum } from './data-source.entity';
 
 @Injectable()
 export class DataSourceService {
@@ -20,6 +20,7 @@ export class DataSourceService {
   async createDataSourceMetadata(
     workspaceId: string,
     workspaceSchema: string,
+    dataSourceType: DataSourceTypeEnum = DataSourceTypeEnum.POSTGRES,
   ): Promise<DataSourceEntity> {
     // TODO: Double check if this is the correct way to do this
     const dataSource = await this.dataSourceMetadataRepository.findOne({
@@ -33,6 +34,7 @@ export class DataSourceService {
     return this.dataSourceMetadataRepository.save({
       workspaceId,
       schema: workspaceSchema,
+      type: dataSourceType,
     });
   }
 

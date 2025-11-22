@@ -5,9 +5,14 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SharePointWorkspaceInitService } from 'src/engine/core-modules/sharepoint/sharepoint-workspace-init.service';
+import { SharePointService } from 'src/engine/core-modules/sharepoint/sharepoint.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import {
+  type DataSourceEntity,
+  DataSourceTypeEnum,
+} from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -47,6 +52,8 @@ export class WorkspaceManagerService {
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly applicationService: ApplicationService,
+    private readonly sharePointService: SharePointService,
+    private readonly sharePointWorkspaceInitService: SharePointWorkspaceInitService,
   ) {}
 
   public async init({
@@ -57,23 +64,72 @@ export class WorkspaceManagerService {
     userId: string;
   }): Promise<void> {
     const workspaceId = workspace.id;
-    const schemaCreationStart = performance.now();
-    const schemaName =
-      await this.workspaceDataSourceService.createWorkspaceDBSchema(
-        workspaceId,
+
+    // Determine datasource type from ENV
+    const datasourceType =
+      process.env.WORKSPACE_DATASOURCE === 'sharepoint'
+        ? DataSourceTypeEnum.SHAREPOINT
+        : DataSourceTypeEnum.POSTGRES;
+
+    let schemaName: string;
+
+    if (datasourceType === DataSourceTypeEnum.SHAREPOINT) {
+      // ====== SharePoint Initialization ======
+      const tenantId = process.env.WORKSPACE_TENANT_ID;
+
+      if (!tenantId) {
+        throw new Error(
+          'WORKSPACE_TENANT_ID must be set when WORKSPACE_DATASOURCE=sharepoint',
+        );
+      }
+
+      this.logger.log('Initializing SharePoint workspace...');
+
+      // Step 1: Get or create SharePoint site
+      const site = await this.sharePointService.getTwentySiteForTenant(
+        tenantId,
+        workspace.displayName || workspace.subdomain,
       );
 
-    const schemaCreationEnd = performance.now();
+      // Step 2: Save siteId to workspace
+      await this.workspaceRepository.update(workspaceId, {
+        sharePointSiteId: site.id,
+      });
 
-    this.logger.log(
-      `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
-    );
+      // Reload workspace to get updated sharePointSiteId
+      workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
+
+      if (!workspace) {
+        throw new Error(`Workspace ${workspaceId} not found after update`);
+      }
+
+      schemaName = 'sharepoint'; // Placeholder
+
+      this.logger.log(`SharePoint site created/found: ${site.id}`);
+    } else {
+      // ====== PostgreSQL Initialization ======
+      const schemaCreationStart = performance.now();
+
+      schemaName =
+        await this.workspaceDataSourceService.createWorkspaceDBSchema(
+          workspaceId,
+        );
+
+      const schemaCreationEnd = performance.now();
+
+      this.logger.log(
+        `Schema creation took ${schemaCreationEnd - schemaCreationStart}ms`,
+      );
+    }
 
     const dataSourceMetadataCreationStart = performance.now();
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
         schemaName,
+        datasourceType, // Pass datasource type
       );
 
     const featureFlags =
@@ -98,19 +154,41 @@ export class WorkspaceManagerService {
 
     await this.setupDefaultRoles(workspaceId, userId);
 
-    const prefillStandardObjectsStart = performance.now();
+    // SharePoint-specific: Create Lists after ObjectMetadata synced
+    if (datasourceType === DataSourceTypeEnum.SHAREPOINT) {
+      const tenantId = process.env.WORKSPACE_TENANT_ID!;
+      const siteId = workspace.sharePointSiteId!;
 
-    await this.prefillWorkspaceWithStandardObjectsRecords(
-      dataSourceMetadata,
-      workspaceId,
-      featureFlags,
-    );
+      this.logger.log('Initializing SharePoint Lists...');
 
-    const prefillStandardObjectsEnd = performance.now();
+      // Get synced ObjectMetadata
+      const objectMetadataCollection =
+        await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
 
-    this.logger.log(
-      `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
-    );
+      // Initialize SharePoint Lists
+      await this.sharePointWorkspaceInitService.initializeWorkspace(
+        tenantId,
+        siteId,
+        objectMetadataCollection,
+      );
+
+      this.logger.log('SharePoint Lists initialization completed');
+    } else {
+      // PostgreSQL: Prefill data
+      const prefillStandardObjectsStart = performance.now();
+
+      await this.prefillWorkspaceWithStandardObjectsRecords(
+        dataSourceMetadata,
+        workspaceId,
+        featureFlags,
+      );
+
+      const prefillStandardObjectsEnd = performance.now();
+
+      this.logger.log(
+        `Prefill standard objects took ${prefillStandardObjectsEnd - prefillStandardObjectsStart}ms`,
+      );
+    }
   }
 
   private async prefillWorkspaceWithStandardObjectsRecords(

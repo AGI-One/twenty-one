@@ -36,20 +36,38 @@ export class SharePointSchemaService {
     // Generate list schema from object metadata
     const listSchema = this.generateListSchema(objectMetadata);
 
-    // Create the list
-    const list = await this.sharePointService.createList(
+    // Check if list already exists
+    const existingLists = await this.sharePointService.getSiteLists(
       siteId,
-      {
-        displayName: listSchema.displayName,
-        description: listSchema.description,
-        template: listSchema.template,
-      },
       token,
     );
+    const existingList = existingLists.find(
+      (list) => list.displayName === listSchema.displayName,
+    );
 
-    this.logger.log(`Created list: ${list.displayName} (${list.id})`);
+    let list;
 
-    // Add custom columns
+    if (existingList) {
+      this.logger.log(
+        `List already exists: ${existingList.displayName} (${existingList.id})`,
+      );
+      list = existingList;
+    } else {
+      // Create the list
+      list = await this.sharePointService.createList(
+        siteId,
+        {
+          displayName: listSchema.displayName,
+          description: listSchema.description,
+          template: listSchema.template,
+        },
+        token,
+      );
+
+      this.logger.log(`Created list: ${list.displayName} (${list.id})`);
+    }
+
+    // Add custom columns (will skip existing ones)
     await this.createColumns(siteId, list.id, listSchema.columns, token);
 
     return {
